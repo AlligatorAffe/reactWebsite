@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const request = require("http");
+const { request } = require("http");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 dotenv.config();
@@ -32,7 +32,7 @@ app.use(function (request, response, next) {
 
 //app.use("/api", authRoutes);
 
-//const auth = require("./routers/authentication");
+const auth = require("./routers/authentication");
 
 
 /*
@@ -69,7 +69,16 @@ app.listen(port, () => {
   console.log(`Backend running on http://localhost:${port}`);
 });
 
-
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  //const isAuthenticated = auth.authenticateUser(username, password);
+  //if (isAuthenticated) {
+    if (username === "admin@admin.com" && password === "admin"){
+    res.send("Login Successful");
+  } else {
+    res.status(401).send("Authentication Failed");
+  }
+});
 
 // Generating JWT
 app.post("/user/generateToken", (req, res) => {
@@ -111,9 +120,6 @@ app.get("/user/validateToken", (req, res) => {
   }
 });
 
-
-
-
 app.get("/protectedRoute", verifyToken, (req, res) => {
   res.send("Denna sida är skyddad och du är autentiserad!");
 });
@@ -121,7 +127,7 @@ app.get("/protectedRoute", verifyToken, (req, res) => {
 
 /*
 //-----------------------------------------
-app.post("/session", async (req, res) => {
+app.post("/login/session", async (req, res, next) => {
   let { email, password } = req.body;
 
   // Hårdkodade användaruppgifter
@@ -132,17 +138,11 @@ app.post("/session", async (req, res) => {
   };
 
   // Kontrollerar om de inmatade uppgifterna matchar de hårdkodade uppgifterna
-  if (email === "admin@admin.com" && password === "admin") {
-    res.status(200).json({
-      success: true,
-      data: {
-        email: hardcodedUser.email,
-        //token: token,
-      },
-    });
-   
-  }else {
-/*
+  if (email !== hardcodedUser.email || password !== hardcodedUser.password) {
+    const error = new Error("Wrong details, please check at once");
+    return next(error);
+  }
+
   let token;
   try {
     // Skapar jwt token
@@ -159,11 +159,15 @@ app.post("/session", async (req, res) => {
     const error = new Error("Error! Something went wrong.");
     return next(error);
   }
-  
-  res.status(401).json({ error: "Incorrect username or password" });
 
-  }
-
+  res.status(200).json({
+    success: true,
+    data: {
+      userId: hardcodedUser.id,
+      email: hardcodedUser.email,
+      token: token,
+    },
+  });
 });
 
 */

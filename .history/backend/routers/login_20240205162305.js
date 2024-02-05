@@ -4,7 +4,7 @@ const router = express.Router();
 const auth = require("./authentication");
 
 // Login-route
-router.post("/login", (req, res) => {
+router.post("/session", (req, res) => {
   const { username, password } = req.body;
   if (username === "admin@admin.com" && password === "admin") {
     //const token = auth.generateToken({ username });

@@ -30,7 +30,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("/login", {
+      const response = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -39,29 +39,7 @@ function Login() {
           email
         )}&password=${encodeURIComponent(password)}`,
       });
-      const body = await response.json();
-      switch (response.status) {
-        case 200:
-          navigate("/");
-          console.log("success");
-          break;
-        case 400:
-          setError("Incorrect username or password");
-          break;
-        case 401:
-          setError("Incorrect username or password");
-          break;
-        case 500:
-          setError(body.error); /*"Internal Server Error");*/
-          break;
-        default:
-          setError("An error occurred while logging in.");
-          break;
-      }
-    } catch (error) {
-      setError("An error occurred while logging in.");
-    }
-  };
+ 
 
   return (
     <div>

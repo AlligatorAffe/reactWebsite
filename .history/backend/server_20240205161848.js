@@ -5,8 +5,8 @@ const request = require("http");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 dotenv.config();
-const loginRoutes = require("./routers/login");
-const verifyToken = require("./routers/authentication");
+//const loginRoutes = require("./routers/login");
+//const verifyToken = require("./routers/authentication");
 const cors = require("cors");
 //import authRoutes from "./routers/authentication";
 
@@ -19,7 +19,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(loginRoutes);
+//app.use(loginRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(function (request, response, next) {
@@ -111,59 +111,26 @@ app.get("/user/validateToken", (req, res) => {
   }
 });
 
-
-
-
+/*
 app.get("/protectedRoute", verifyToken, (req, res) => {
   res.send("Denna sida är skyddad och du är autentiserad!");
 });
+*/
 
 
-/*
 //-----------------------------------------
-app.post("/session", async (req, res) => {
-  let { email, password } = req.body;
+app.post("/session", (req, res) => {
+  const { username, password } = req.body;
 
-  // Hårdkodade användaruppgifter
-  const hardcodedUser = {
-    email: "admin@admin.com", // Förändrad från "username" till "email" för konsistens
-    password: "admin",
-    id: "12345", // Ett exempel på användar-id
-  };
+  // Här skulle du normalt validera användarnamn och lösenord, t.ex. mot en databas eller annan lagring
 
-  // Kontrollerar om de inmatade uppgifterna matchar de hårdkodade uppgifterna
-  if (email === "admin@admin.com" && password === "admin") {
-    res.status(200).json({
-      success: true,
-      data: {
-        email: hardcodedUser.email,
-        //token: token,
-      },
-    });
-   
-  }else {
-/*
-  let token;
-  try {
-    // Skapar jwt token
-    token = jwt.sign(
-      {
-        userId: hardcodedUser.id,
-        email: hardcodedUser.email,
-      },
-      "secretkeyappearshere",
-      { expiresIn: "1h" }
-    );
-  } catch (err) {
-    console.log(err);
-    const error = new Error("Error! Something went wrong.");
-    return next(error);
+  // Exempel på en enkel autentisering (använd med försiktighet och inte i produktion)
+  if (username === "demo" && password === "password") {
+    // Inloggning lyckades
+    res.status(200).json({ message: "Inloggning lyckades" });
+  } else {
+    // Inloggning misslyckades
+    res.status(401).json({ error: "Felaktigt användarnamn eller lösenord" });
   }
-  
-  res.status(401).json({ error: "Incorrect username or password" });
-
-  }
-
 });
 
-*/

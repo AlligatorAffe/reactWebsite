@@ -5,7 +5,7 @@ const request = require("http");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 dotenv.config();
-const loginRoutes = require("./routers/login");
+const loginRoutes = require("./routers/session");
 const verifyToken = require("./routers/authentication");
 const cors = require("cors");
 //import authRoutes from "./routers/authentication";
@@ -69,7 +69,7 @@ app.listen(port, () => {
   console.log(`Backend running on http://localhost:${port}`);
 });
 
-
+/*
 
 // Generating JWT
 app.post("/user/generateToken", (req, res) => {
@@ -111,13 +111,14 @@ app.get("/user/validateToken", (req, res) => {
   }
 });
 
+*/
 
 
-
+/*
 app.get("/protectedRoute", verifyToken, (req, res) => {
   res.send("Denna sida är skyddad och du är autentiserad!");
 });
-
+*/
 
 /*
 //-----------------------------------------

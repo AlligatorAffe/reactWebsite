@@ -5,7 +5,7 @@ const request = require("http");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 dotenv.config();
-const loginRoutes = require("./routers/login");
+const loginRoutes = require("./routers/session");
 const verifyToken = require("./routers/authentication");
 const cors = require("cors");
 //import authRoutes from "./routers/authentication";

@@ -2,13 +2,15 @@ import { SyntheticEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
 
+let inccorectUsernameOrPassword = false;
+const errors = [];
+
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to handle error
   const loggedIn = isUserLoggedIn();
-
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("IsloggedIn");
     if (isLoggedIn === "true") {
@@ -17,20 +19,22 @@ function Login() {
   }, [navigate]);
 
   const handleLogin = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    setError(""); // Återställ tidigare felmeddelanden vid varje inloggningsförsök
-
     if (!email || email.trim() === "") {
-      setError("Username cannot be empty.");
+      errors.push("Username cannot be empty.");
       return;
     }
     if (!password || password.trim() === "") {
-      setError("Password cannot be empty.");
+      errors.push("Password cannot be empty.");
       return;
     }
-
+    if (inccorectUsernameOrPassword === true) {
+      errors.push("Wrong Username or password");
+      return;
+    }
+    e.preventDefault();
     try {
-      const response = await fetch("/login", {
+      console.log("detta är i email och password", email, password);
+      const response = await fetch("http://localhost:8080/login/session", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -46,20 +50,18 @@ function Login() {
           console.log("success");
           break;
         case 400:
-          setError("Incorrect username or password");
+          errors.push("Incorreect username or password");
           break;
         case 401:
-          setError("Incorrect username or password");
+          errors.push("Incorrect username or password");
+          inccorectUsernameOrPassword = true;
           break;
         case 500:
-          setError(body.error); /*"Internal Server Error");*/
-          break;
-        default:
-          setError("An error occurred while logging in.");
+          errors.push(body.error); /*"Internal Server Error");*/
           break;
       }
     } catch (error) {
-      setError("An error occurred while logging in.");
+      errors.push(error);
     }
   };
 
@@ -71,6 +73,7 @@ function Login() {
         <div className="py-28">
           <div className="w-full max-w-xs m-auto bg-indigo-100 rounded p-5">
             <header>
+              <style></style>
               <img
                 className="w-30 mx-auto blend-multiply"
                 src="/blabar.png"
@@ -79,7 +82,10 @@ function Login() {
             </header>
             <form onSubmit={handleLogin}>
               <div>
-                <label className="block mb-2 text-indigo-500" htmlFor="username">
+                <label
+                  className="block mb-2 text-indigo-500"
+                  htmlFor="username"
+                >
                   Email
                 </label>
                 <input
@@ -91,7 +97,10 @@ function Login() {
                 ></input>
               </div>
               <div>
-                <label className="block mb-2 text-indigo-500" htmlFor="password">
+                <label
+                  className="block mb-2 text-indigo-500"
+                  htmlFor="password"
+                >
                   Password
                 </label>
                 <input

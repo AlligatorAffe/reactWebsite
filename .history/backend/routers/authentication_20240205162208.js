@@ -46,6 +46,6 @@ function validateToken(req,res){
     // Access Denied
     return res.status(401).send(error);
   }
-};
+});
 
 module.exports = validateToken;

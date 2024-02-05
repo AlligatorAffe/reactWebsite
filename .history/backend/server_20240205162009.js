@@ -112,8 +112,6 @@ app.get("/user/validateToken", (req, res) => {
 });
 
 
-
-
 app.get("/protectedRoute", verifyToken, (req, res) => {
   res.send("Denna sida är skyddad och du är autentiserad!");
 });

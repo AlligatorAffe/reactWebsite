@@ -30,7 +30,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("/login", {
+      const response = await fetch("http://localhost:8080/loginNumer2", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

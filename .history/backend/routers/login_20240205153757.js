@@ -7,8 +7,8 @@ const auth = require("./authentication");
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (username === "admin@admin.com" && password === "admin") {
-    //const token = auth.generateToken({ username });
-    //const token = validateToken;
+    const token = auth.generateToken({ username });
+    //const token = authenticateToken;
     //res.cookie("auth_token", token, { httpOnly: true, sameSite: "strict" });
     res.json({ message: "Inloggning lyckades" });
   } else {

@@ -3,7 +3,9 @@ const express = require("express");
 const router = express.Router();
 
 const jwt = require("jsonwebtoken");
+const secretKey = "din hemliga nyckel";
 
+const ACCESS_TOKEN_SECRET = "oaipfgauighASHFjagh";
 
 // Middleware för att verifiera token
 function verifyToken(req, res, next) {
@@ -28,24 +30,10 @@ function verifyToken(req, res, next) {
 module.exports = verifyToken;
 
 
-function validateToken(req,res){
-  let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
-  try {
-    const token = req.header(tokenHeaderKey);
+module.exports= {
 
-    const verified = jwt.verify(token, jwtSecretKey);
-    if (verified) {
-      return res.send("Successfully Verified");
-    } else {
-      // Access Denied
-      return res.status(401).send(error);
-    }
-  } catch (error) {
-    // Access Denied
-    return res.status(401).send(error);
+  authenticateUser: function ( username, password){
+    return isAuthenticated;
   }
-};
-
-module.exports = validateToken;
+}
