@@ -1,9 +1,7 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-
+const request = require("http");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 dotenv.config();
@@ -21,7 +19,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use("/login", loginRoutes);
+app.use(loginRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(function (request, response, next) {
@@ -76,23 +74,17 @@ app.listen(port, () => {
 // Generating JWT
 app.post("/user/generateToken", (req, res) => {
   // Validate User Here
-  console.log("häääär")
-  const { username, password } = req.body;
-  if (username === "admin@admin.com" && password === "admin") {
-    let jwtSecretKey = process.env.JWT_SECRET_KEY;
-    let data = {
-      time: Date(),
-      userId: 12,
-    };
+  // Then generate JWT Token
 
-    const token = jwt.sign(data, jwtSecretKey);
+  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  let data = {
+    time: Date(),
+    userId: 12,
+  };
 
-    // Skicka tillbaka både token och statuskod 200 om autentiseringen är framgångsrik
-    res.status(200).json({ token }); // Använd json() för att skicka JSON-svar
-  } else {
-    // Skicka en 401-statuskod och ett felmeddelande om autentiseringen misslyckas
-    res.status(401).json({ error: "Wrong Email or Password" });
-  }
+  const token = jwt.sign(data, jwtSecretKey);
+
+  res.send(token);
 });
 
 // Verification of JWT
@@ -101,7 +93,6 @@ app.get("/user/validateToken", (req, res) => {
   // Due to security reasons.
 
   let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
-  // eslint-disable-next-line no-undef
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   try {
@@ -112,12 +103,10 @@ app.get("/user/validateToken", (req, res) => {
       return res.send("Successfully Verified");
     } else {
       // Access Denied
-      console.log("i denna fitt funktionen")
       return res.status(401).send(error);
     }
   } catch (error) {
     // Access Denied
-    console.log("i denna fitt funktionen222")
     return res.status(401).send(error);
   }
 });
@@ -130,3 +119,51 @@ app.get("/protectedRoute", verifyToken, (req, res) => {
 });
 
 
+/*
+//-----------------------------------------
+app.post("/session", async (req, res) => {
+  let { email, password } = req.body;
+
+  // Hårdkodade användaruppgifter
+  const hardcodedUser = {
+    email: "admin@admin.com", // Förändrad från "username" till "email" för konsistens
+    password: "admin",
+    id: "12345", // Ett exempel på användar-id
+  };
+
+  // Kontrollerar om de inmatade uppgifterna matchar de hårdkodade uppgifterna
+  if (email === "admin@admin.com" && password === "admin") {
+    res.status(200).json({
+      success: true,
+      data: {
+        email: hardcodedUser.email,
+        //token: token,
+      },
+    });
+   
+  }else {
+/*
+  let token;
+  try {
+    // Skapar jwt token
+    token = jwt.sign(
+      {
+        userId: hardcodedUser.id,
+        email: hardcodedUser.email,
+      },
+      "secretkeyappearshere",
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    console.log(err);
+    const error = new Error("Error! Something went wrong.");
+    return next(error);
+  }
+  
+  res.status(401).json({ error: "Incorrect username or password" });
+
+  }
+
+});
+
+*/

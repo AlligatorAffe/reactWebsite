@@ -4,11 +4,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
-const dotenv = require("dotenv");
-const jwt = require("jsonwebtoken");
-dotenv.config();
+//const dotenv = require("dotenv");
+//const jwt = require("jsonwebtoken");
+//dotenv.config();
 const loginRoutes = require("./routers/login");
-const verifyToken = require("./routers/authentication");
+//const verifyToken = require("./routers/authentication");
 const cors = require("cors");
 //import authRoutes from "./routers/authentication";
 
@@ -124,9 +124,9 @@ app.get("/user/validateToken", (req, res) => {
 
 
 
-
+/*
 app.get("/protectedRoute", verifyToken, (req, res) => {
   res.send("Denna sida är skyddad och du är autentiserad!");
 });
-
+*/
 

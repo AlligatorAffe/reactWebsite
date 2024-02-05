@@ -7,8 +7,6 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to handle error
-
-  
   const loggedIn = isUserLoggedIn();
 /*
   useEffect(() => {
@@ -18,7 +16,7 @@ function Login() {
     }
   }, [navigate]);
 */
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: SyntheticEvent) => {
     e.preventDefault();
     setError(""); // Återställ tidigare felmeddelanden vid varje inloggningsförsök
 
@@ -32,24 +30,20 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/user/generateToken", {
+      const response = await fetch("http://localhost:8080/login/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `grant_type=password&username=${encodeURIComponent(email)}&password=${encodeURIComponent(
-					password
-				)}`,
+        body: `grant_type=password&username=${encodeURIComponent(
+          email
+        )}&password=${encodeURIComponent(password)}`,
       });
       const body = await response.json();
-      const token = body.token;
       switch (response.status) {
         case 200:
-          console.log("success code 200");
-          //navigate("/");
-          setEmail("");
-          setPassword("");
-          isUserLoggedIn(token);
+          navigate("/");
+          console.log("success");
           break;
         case 400:
           setError("Incorrect username or password");
@@ -71,7 +65,6 @@ function Login() {
 
   return (
     <div>
-      
       {loggedIn ? (
         <p>Du lyckades logga in</p>
       ) : (

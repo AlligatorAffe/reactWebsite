@@ -4,11 +4,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
-const dotenv = require("dotenv");
-const jwt = require("jsonwebtoken");
-dotenv.config();
+//const dotenv = require("dotenv");
+//const jwt = require("jsonwebtoken");
+//dotenv.config();
 const loginRoutes = require("./routers/login");
-const verifyToken = require("./routers/authentication");
+//const verifyToken = require("./routers/authentication");
 const cors = require("cors");
 //import authRoutes from "./routers/authentication";
 
@@ -76,23 +76,23 @@ app.listen(port, () => {
 // Generating JWT
 app.post("/user/generateToken", (req, res) => {
   // Validate User Here
-  console.log("häääär")
   const { username, password } = req.body;
   if (username === "admin@admin.com" && password === "admin") {
-    let jwtSecretKey = process.env.JWT_SECRET_KEY;
-    let data = {
-      time: Date(),
-      userId: 12,
-    };
+    
+  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  let data = {
+    time: Date(),
+    userId: 12,
+  };
 
-    const token = jwt.sign(data, jwtSecretKey);
+  const token = jwt.sign(data, jwtSecretKey);
 
-    // Skicka tillbaka både token och statuskod 200 om autentiseringen är framgångsrik
-    res.status(200).json({ token }); // Använd json() för att skicka JSON-svar
+  res.send(token);
   } else {
-    // Skicka en 401-statuskod och ett felmeddelande om autentiseringen misslyckas
-    res.status(401).json({ error: "Wrong Email or Password" });
+    res.status(401).send("Wrong Email or Password");
   }
+  // Then generate JWT Token
+
 });
 
 // Verification of JWT
@@ -124,9 +124,9 @@ app.get("/user/validateToken", (req, res) => {
 
 
 
-
+/*
 app.get("/protectedRoute", verifyToken, (req, res) => {
   res.send("Denna sida är skyddad och du är autentiserad!");
 });
-
+*/
 

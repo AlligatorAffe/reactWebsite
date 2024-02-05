@@ -7,8 +7,6 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to handle error
-
-  
   const loggedIn = isUserLoggedIn();
 /*
   useEffect(() => {
@@ -45,11 +43,8 @@ function Login() {
       const token = body.token;
       switch (response.status) {
         case 200:
-          console.log("success code 200");
-          //navigate("/");
-          setEmail("");
-          setPassword("");
-          isUserLoggedIn(token);
+          navigate("/");
+          console.log("success");
           break;
         case 400:
           setError("Incorrect username or password");
@@ -71,7 +66,6 @@ function Login() {
 
   return (
     <div>
-      
       {loggedIn ? (
         <p>Du lyckades logga in</p>
       ) : (

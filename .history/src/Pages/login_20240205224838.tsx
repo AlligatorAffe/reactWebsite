@@ -7,9 +7,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to handle error
-
-  
-  const loggedIn = isUserLoggedIn();
+  const loggedIn = isUserLoggedIn(const token);
 /*
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("IsloggedIn");

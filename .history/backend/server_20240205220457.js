@@ -76,23 +76,17 @@ app.listen(port, () => {
 // Generating JWT
 app.post("/user/generateToken", (req, res) => {
   // Validate User Here
-  console.log("häääär")
-  const { username, password } = req.body;
-  if (username === "admin@admin.com" && password === "admin") {
-    let jwtSecretKey = process.env.JWT_SECRET_KEY;
-    let data = {
-      time: Date(),
-      userId: 12,
-    };
+  // Then generate JWT Token
 
-    const token = jwt.sign(data, jwtSecretKey);
+  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  let data = {
+    time: Date(),
+    userId: 12,
+  };
 
-    // Skicka tillbaka både token och statuskod 200 om autentiseringen är framgångsrik
-    res.status(200).json({ token }); // Använd json() för att skicka JSON-svar
-  } else {
-    // Skicka en 401-statuskod och ett felmeddelande om autentiseringen misslyckas
-    res.status(401).json({ error: "Wrong Email or Password" });
-  }
+  const token = jwt.sign(data, jwtSecretKey);
+
+  res.send(token);
 });
 
 // Verification of JWT
@@ -117,7 +111,7 @@ app.get("/user/validateToken", (req, res) => {
     }
   } catch (error) {
     // Access Denied
-    console.log("i denna fitt funktionen222")
+    console.log("i denna fitt funktionen")
     return res.status(401).send(error);
   }
 });
