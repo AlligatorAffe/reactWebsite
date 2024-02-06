@@ -71,11 +71,7 @@ app.listen(port, () => {
   console.log(`Backend running on http://localhost:${port}`);
 });
 
-///--------------------Routes--------------------------------
-app.use('/register', require('./routers/register'));
-app.use('/auth', require('./routers/auth'));
 
-//---------------------Routes----------------------------------
 
 // Generating JWT
 app.post("/user/generateToken", (req, res) => {

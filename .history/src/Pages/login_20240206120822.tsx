@@ -59,7 +59,6 @@ function Login() {
       if(response.status === 200){
         console.log("success code 200");
           //navigate("/");
-          console.log(token)
           setAuth({userEmail,inputPassword,token})
           setUserEmail("");
           setInputPassword("");
@@ -72,13 +71,12 @@ function Login() {
       }else if(err.response?.status=== 400){
         setError("Missing username or password")
       } else if(err.response?.status === 401){
-        setError("Unathorized");
+        setError("Unathorized Wrong Password");
       } else if (err.response?.status === 500){
         setError("Internal Server Error")
       }else {
         setError("An error occurred while logging in.");
       }
-      errRef.current.focus();
     }
   };
   const routeChange = () =>{ 

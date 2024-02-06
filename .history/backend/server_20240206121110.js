@@ -71,11 +71,7 @@ app.listen(port, () => {
   console.log(`Backend running on http://localhost:${port}`);
 });
 
-///--------------------Routes--------------------------------
-app.use('/register', require('./routers/register'));
-app.use('/auth', require('./routers/auth'));
 
-//---------------------Routes----------------------------------
 
 // Generating JWT
 app.post("/user/generateToken", (req, res) => {
@@ -95,7 +91,7 @@ app.post("/user/generateToken", (req, res) => {
     res.status(200).json({ token }); // Använd json() för att skicka JSON-svar
   } else {
     // Skicka en 401-statuskod och ett felmeddelande om autentiseringen misslyckas
-    res.status(401).json({ error: "Wrong Email or Password" });
+    res.status(401).json({ message: "Wrong Email or Password" });
   }
 });
 

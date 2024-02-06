@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useEffect, useState ,useContext} from "react";
+import { useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
 import BlueButton from "../Components/BlueButton";
 
-import AuthContext from "../context/AuthProvider";
+const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[A-Z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 function Login() {
-  const { setAuth } = useContext(AuthContext);
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
@@ -54,31 +54,30 @@ function Login() {
       const body = await response.json();
       const token = body.token;
 
-      //const role = response?.data?.roles;
-      
-      if(response.status === 200){
-        console.log("success code 200");
+      switch (response.status) {
+        case 200:
+          console.log("success code 200");
           //navigate("/");
-          console.log(token)
-          setAuth({userEmail,inputPassword,token})
           setUserEmail("");
           setInputPassword("");
           setSuccess(true);
           isUserLoggedIn(token);
+          break;
+        case 400:
+          setError("Incorrect username or password");
+          break;
+        case 401:
+          setError("Incorrect username or password");
+          break;
+        case 500:
+          setError(body.error); /*"Internal Server Error");*/
+          break;
+        default:
+          setError("An error occurred while logging in.");
+          break;
       }
-    } catch (err) {
-      if(!err.response){
-        setError("No Server response");
-      }else if(err.response?.status=== 400){
-        setError("Missing username or password")
-      } else if(err.response?.status === 401){
-        setError("Unathorized");
-      } else if (err.response?.status === 500){
-        setError("Internal Server Error")
-      }else {
-        setError("An error occurred while logging in.");
-      }
-      errRef.current.focus();
+    } catch (error) {
+      setError("An error occurred while logging in.");
     }
   };
   const routeChange = () =>{ 
@@ -91,8 +90,8 @@ function Login() {
       {success ? (
         <div>
           <p>Du lyckades logga in</p>
-          <BlueButton title="Go to Home Page" onClick={routeChange}>
-
+          <BlueButton title="Go to Home Page">
+            
           </BlueButton>
         </div>
       ) : (

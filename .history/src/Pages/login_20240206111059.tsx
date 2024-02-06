@@ -1,32 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useEffect, useState ,useContext} from "react";
+import {useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
-import BlueButton from "../Components/BlueButton";
 
-import AuthContext from "../context/AuthProvider";
+const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[A-Z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 
 function Login() {
-  const { setAuth } = useContext(AuthContext);
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
 
   const [userEmail, setUserEmail] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend
-  const [inputPassword, setInputPassword] = useState(""); // password the user inputs and the password that is sent to backend
+  const [inputPassword, setInputPassword] = useState(""); // password the user inputs and the password that is sent to backend 
   const [error, setError] = useState(""); // State to handle error
 
-  const [success, setSuccess] = useState(false);
+  const [success,setSuccess] = useState(false); 
 
-  useEffect(() => {
+
+  
+  useEffect(() =>{
     userRef.current.focus();
-  }, []);
-
+  }, [])
+  
   const loggedIn = isUserLoggedIn();
 
-  useEffect(() => {
+  useEffect(()=>{
     setError("");
-  }, [userEmail, inputPassword]);
+  },[userEmail,inputPassword])
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -47,54 +49,44 @@ function Login() {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `grant_type=password&username=${encodeURIComponent(
-          userEmail
-        )}&password=${encodeURIComponent(inputPassword)}`,
+        body: `grant_type=password&username=${encodeURIComponent(userEmail)}&password=${encodeURIComponent(
+					inputPassword
+				)}`,
       });
       const body = await response.json();
       const token = body.token;
 
-      //const role = response?.data?.roles;
-      
-      if(response.status === 200){
-        console.log("success code 200");
+      switch (response.status) {
+        case 200:
+          console.log("success code 200");
           //navigate("/");
-          console.log(token)
-          setAuth({userEmail,inputPassword,token})
           setUserEmail("");
           setInputPassword("");
-          setSuccess(true);
           isUserLoggedIn(token);
+          break;
+        case 400:
+          setError("Incorrect username or password");
+          break;
+        case 401:
+          setError("Incorrect username or password");
+          break;
+        case 500:
+          setError(body.error); /*"Internal Server Error");*/
+          break;
+        default:
+          setError("An error occurred while logging in.");
+          break;
       }
-    } catch (err) {
-      if(!err.response){
-        setError("No Server response");
-      }else if(err.response?.status=== 400){
-        setError("Missing username or password")
-      } else if(err.response?.status === 401){
-        setError("Unathorized");
-      } else if (err.response?.status === 500){
-        setError("Internal Server Error")
-      }else {
-        setError("An error occurred while logging in.");
-      }
-      errRef.current.focus();
+    } catch (error) {
+      setError("An error occurred while logging in.");
     }
   };
-  const routeChange = () =>{ 
-    let path = "/"; 
-    navigate(path);
-  }
 
   return (
     <div>
-      {success ? (
-        <div>
-          <p>Du lyckades logga in</p>
-          <BlueButton title="Go to Home Page" onClick={routeChange}>
-
-          </BlueButton>
-        </div>
+      
+      {loggedIn ? (
+        <p>Du lyckades logga in</p>
       ) : (
         <div className="py-28">
           <div className="w-full max-w-xs m-auto bg-indigo-100 rounded p-5">
@@ -107,10 +99,7 @@ function Login() {
             </header>
             <form onSubmit={handleLogin}>
               <div>
-                <label
-                  className="block mb-2 text-indigo-500"
-                  htmlFor="username"
-                >
+                <label className="block mb-2 text-indigo-500" htmlFor="username">
                   Email
                 </label>
                 <input
@@ -124,10 +113,7 @@ function Login() {
                 ></input>
               </div>
               <div>
-                <label
-                  className="block mb-2 text-indigo-500"
-                  htmlFor="password"
-                >
+                <label className="block mb-2 text-indigo-500" htmlFor="password">
                   Password
                 </label>
                 <input
@@ -137,6 +123,7 @@ function Login() {
                   onChange={(e) => setInputPassword(e.target.value)}
                   name="password"
                   required
+                  
                 ></input>
               </div>
               <div>

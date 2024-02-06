@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const { error } = require("console");
 const express = require("express");
 const router = express.Router();
@@ -23,7 +20,7 @@ module.exports = router;
 
 
 
-/*
+
 router.post("/login" , async (req,res) =>{
   const { email, password} = req.body;
 
@@ -47,11 +44,7 @@ router.post("/login" , async (req,res) =>{
   const jwtToken = jwt.sign(
     { id: userWithEmail.id, email: userWithEmail.email}
     process.env.JWT_SECRET_KEY
-  );
-
-  res.json({message: "welcome back!", token: jwtToken})
+    );
 })
 
 export default router;
-
-*/

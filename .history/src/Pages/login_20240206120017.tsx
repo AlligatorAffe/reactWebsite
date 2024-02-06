@@ -56,29 +56,31 @@ function Login() {
 
       //const role = response?.data?.roles;
       
-      if(response.status === 200){
-        console.log("success code 200");
+      switch (response.status) {
+        case 200:
+          console.log("success code 200");
           //navigate("/");
-          console.log(token)
           setAuth({userEmail,inputPassword,token})
           setUserEmail("");
           setInputPassword("");
           setSuccess(true);
           isUserLoggedIn(token);
+          break;
+        case 400:
+          setError("Incorrect username or password");
+          break;
+        case 401:
+          setError("Incorrect username or password");
+          break;
+        case 500:
+          setError(body.error); /*"Internal Server Error");*/
+          break;
+        default:
+          setError("An error occurred while logging in.");
+          break;
       }
-    } catch (err) {
-      if(!err.response){
-        setError("No Server response");
-      }else if(err.response?.status=== 400){
-        setError("Missing username or password")
-      } else if(err.response?.status === 401){
-        setError("Unathorized");
-      } else if (err.response?.status === 500){
-        setError("Internal Server Error")
-      }else {
-        setError("An error occurred while logging in.");
-      }
-      errRef.current.focus();
+    } catch (error) {
+      setError("An error occurred while logging in.");
     }
   };
   const routeChange = () =>{ 

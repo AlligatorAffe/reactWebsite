@@ -1,36 +1,68 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useEffect, useState ,useContext} from "react";
+import {useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
-import BlueButton from "../Components/BlueButton";
 
-import AuthContext from "../context/AuthProvider";
+const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[A-Z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 
 function Login() {
-  const { setAuth } = useContext(AuthContext);
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
 
-  const [userEmail, setUserEmail] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend
-  const [inputPassword, setInputPassword] = useState(""); // password the user inputs and the password that is sent to backend
+  const [userEmail, setUserEmail] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend.
+  const [validName, setValidName] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
+
+  const [inputPassword, setInputPassword] = useState(""); // password the user inputs and the password that is sent to backend 
+  const [validPassword,setValidPassword] = useState(false);
+  const [passwordFocus,setPasswordFocus] = useState(false);
+
+  const [matchPassW,setMatchPassW] = useState("")
+  const [validMatch,setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
+
   const [error, setError] = useState(""); // State to handle error
-
-  const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
-
+  const [success,setSuccess] = useState(false);
   const loggedIn = isUserLoggedIn();
 
-  useEffect(() => {
+  useEffect(() =>{
+    userRef.current.focus();
+  }, [])
+
+  useEffect(() =>{
+    const result = USER_REGEX.test(userEmail);
+    console.log(result)
+    console.log(userEmail);
+    setValidName(result);
+  }, [userEmail])
+    
+
+  useEffect(() =>{
+    const result = PWD_REGEX.test(inputPassword);
+    console.log(result);
+    console.log(inputPassword);
+    setValidPassword(result);
+    const match = inputPassword == matchPassW;
+    setValidMatch(match);
+  }, [inputPassword, matchPassW])
+
+  useEffect(() =>{
     setError("");
-  }, [userEmail, inputPassword]);
+  },[userEmail,inputPassword,matchPassW])
+
+
+
+
+  
+ 
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    //setError(""); // Återställ tidigare felmeddelanden vid varje inloggningsförsök
+    /*
+    setError(""); // Återställ tidigare felmeddelanden vid varje inloggningsförsök
 
     if (!userEmail || userEmail.trim() === "") {
       setError("Username cannot be empty.");
@@ -40,61 +72,51 @@ function Login() {
       setError("Password cannot be empty.");
       return;
     }
-
+*/
     try {
       const response = await fetch("http://localhost:8080/user/generateToken", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `grant_type=password&username=${encodeURIComponent(
-          userEmail
-        )}&password=${encodeURIComponent(inputPassword)}`,
+        body: `grant_type=password&username=${encodeURIComponent(userEmail)}&password=${encodeURIComponent(
+					inputPassword
+				)}`,
       });
       const body = await response.json();
       const token = body.token;
 
-      //const role = response?.data?.roles;
-      
-      if(response.status === 200){
-        console.log("success code 200");
+      switch (response.status) {
+        case 200:
+          console.log("success code 200");
           //navigate("/");
-          console.log(token)
-          setAuth({userEmail,inputPassword,token})
           setUserEmail("");
           setInputPassword("");
-          setSuccess(true);
           isUserLoggedIn(token);
+          break;
+        case 400:
+          setError("Incorrect username or password");
+          break;
+        case 401:
+          setError("Incorrect username or password");
+          break;
+        case 500:
+          setError(body.error); /*"Internal Server Error");*/
+          break;
+        default:
+          setError("An error occurred while logging in.");
+          break;
       }
-    } catch (err) {
-      if(!err.response){
-        setError("No Server response");
-      }else if(err.response?.status=== 400){
-        setError("Missing username or password")
-      } else if(err.response?.status === 401){
-        setError("Unathorized");
-      } else if (err.response?.status === 500){
-        setError("Internal Server Error")
-      }else {
-        setError("An error occurred while logging in.");
-      }
-      errRef.current.focus();
+    } catch (error) {
+      setError("An error occurred while logging in.");
     }
   };
-  const routeChange = () =>{ 
-    let path = "/"; 
-    navigate(path);
-  }
 
   return (
     <div>
-      {success ? (
-        <div>
-          <p>Du lyckades logga in</p>
-          <BlueButton title="Go to Home Page" onClick={routeChange}>
-
-          </BlueButton>
-        </div>
+      
+      {loggedIn ? (
+        <p>Du lyckades logga in</p>
       ) : (
         <div className="py-28">
           <div className="w-full max-w-xs m-auto bg-indigo-100 rounded p-5">
@@ -107,36 +129,35 @@ function Login() {
             </header>
             <form onSubmit={handleLogin}>
               <div>
-                <label
-                  className="block mb-2 text-indigo-500"
-                  htmlFor="username"
-                >
+                <label className="block mb-2 text-indigo-500" htmlFor="username">
                   Email
                 </label>
                 <input
                   className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
                   type="userEmail"
                   name="userEmail"
-                  value={userEmail}
+                  id="username"
                   ref={userRef}
-                  required
+                  autoComplete="off"
+                  value={userEmail}
                   onChange={(e) => setUserEmail(e.target.value)}
+                  required
+                  aria-invalid={validName = "false" : "true"}
+                  arial-describedby="uidnote"
+                  onFocus={()=> setUserFocus(true)}
+                  onBlur={()=> setUserFocus(false)}
                 ></input>
               </div>
               <div>
-                <label
-                  className="block mb-2 text-indigo-500"
-                  htmlFor="password"
-                >
+                <label className="block mb-2 text-indigo-500" htmlFor="password">
                   Password
                 </label>
                 <input
                   className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
                   type="password"
-                  value={inputPassword}
+                  value={password}
                   onChange={(e) => setInputPassword(e.target.value)}
                   name="password"
-                  required
                 ></input>
               </div>
               <div>

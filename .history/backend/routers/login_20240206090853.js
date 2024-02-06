@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const { error } = require("console");
 const express = require("express");
 const router = express.Router();
@@ -23,7 +20,7 @@ module.exports = router;
 
 
 
-/*
+
 router.post("/login" , async (req,res) =>{
   const { email, password} = req.body;
 
@@ -44,14 +41,9 @@ router.post("/login" , async (req,res) =>{
   }
 
   //skicka vidare för att skapa token eller skapa den här. 
-  const jwtToken = jwt.sign(
-    { id: userWithEmail.id, email: userWithEmail.email}
-    process.env.JWT_SECRET_KEY
-  );
-
-  res.json({message: "welcome back!", token: jwtToken})
+  const jwtToken = jwt.sign({
+    id: userWithEmail.id, email: userWithEmail.email
+  })
 })
 
 export default router;
-
-*/

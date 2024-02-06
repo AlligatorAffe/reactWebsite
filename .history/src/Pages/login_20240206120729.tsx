@@ -59,7 +59,6 @@ function Login() {
       if(response.status === 200){
         console.log("success code 200");
           //navigate("/");
-          console.log(token)
           setAuth({userEmail,inputPassword,token})
           setUserEmail("");
           setInputPassword("");
@@ -78,7 +77,6 @@ function Login() {
       }else {
         setError("An error occurred while logging in.");
       }
-      errRef.current.focus();
     }
   };
   const routeChange = () =>{ 

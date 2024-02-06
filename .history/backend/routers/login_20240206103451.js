@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const { error } = require("console");
 const express = require("express");
 const router = express.Router();

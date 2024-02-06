@@ -73,7 +73,6 @@ app.listen(port, () => {
 
 ///--------------------Routes--------------------------------
 app.use('/register', require('./routers/register'));
-app.use('/auth', require('./routers/auth'));
 
 //---------------------Routes----------------------------------
 
