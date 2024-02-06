@@ -12,7 +12,9 @@ const loginRoutes = require("./routers/login");
 const cors = require("cors");
 
 const verifyJWT = require('./middleware/verifyJWT');
+//import authRoutes from "./routers/authentication";
 
+//const { generateToken, verifyToken } = require("./auth");
 
 const app = express();
 const port = process.env.PORT || 8080; // Du kan välja vilken port som helst
@@ -35,6 +37,11 @@ app.use(function (request, response, next) {
 });
 
 
+//--------------------Middleware for Cookies---------------
+
+app.use(cookieParser());
+
+//--------------------Middleware for Cookies---------------
 
 
 app.get("/Message", (req, res) => {
@@ -115,7 +122,7 @@ app.get("/user/validateToken", (req, res) => {
 
 
 
-app.use(verifyJWT)
+
 app.get("/protectedRoute", verifyJWT, (req, res) => {
   res.send("Denna sida är skyddad och du är autentiserad!");
 });
