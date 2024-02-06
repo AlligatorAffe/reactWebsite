@@ -22,12 +22,7 @@ const port = process.env.PORT || 8080; // Du kan välja vilken port som helst
 app.use(cors());
 
 app.use(bodyParser.json());
-
-//--------------------Middleware for Cookies---------------
-
 app.use(cookieParser());
-
-//--------------------Middleware for Cookies---------------
 app.use("/login", loginRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -41,6 +36,12 @@ app.use(function (request, response, next) {
 
 
 
+//--------------------Middleware for Cookies---------------
+
+app.use(cookieParser());
+
+
+//--------------------Middleware for Cookies---------------
 
 
 app.get("/Message", (req, res) => {

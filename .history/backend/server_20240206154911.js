@@ -8,9 +8,8 @@ const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 dotenv.config();
 const loginRoutes = require("./routers/login");
-//const verifyToken = require("./routers/authentication");
+const verifyToken = require("./routers/authentication");
 const cors = require("cors");
-
 const verifyJWT = require('./middleware/verifyJWT');
 //import authRoutes from "./routers/authentication";
 
@@ -22,12 +21,7 @@ const port = process.env.PORT || 8080; // Du kan välja vilken port som helst
 app.use(cors());
 
 app.use(bodyParser.json());
-
-//--------------------Middleware for Cookies---------------
-
 app.use(cookieParser());
-
-//--------------------Middleware for Cookies---------------
 app.use("/login", loginRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -39,9 +33,23 @@ app.use(function (request, response, next) {
   next();
 });
 
+//app.use("/api", authRoutes);
+
+//const auth = require("./routers/authentication");
 
 
+/*
 
+app.get("/protected", (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    verifyToken(token);
+    res.send("Hemlig information");
+  } catch (error) {
+    res.status(401).send("Unvalid token");
+  }
+});
+*/
 
 app.get("/Message", (req, res) => {
   console.log("Received GET request");
@@ -67,7 +75,7 @@ app.listen(port, () => {
 ///--------------------Routes--------------------------------
 app.use('/register', require('./routers/register'));
 app.use('/auth', require('./routers/auth'));
-app.use('/refresh', require('./routers/refresh'))
+
 //---------------------Routes----------------------------------
 
 // Generating JWT
