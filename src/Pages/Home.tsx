@@ -24,6 +24,30 @@ function Home() {
         // Det är bättre att hantera felmeddelanden som en state-variabel istället för att använda en array 'errors'
       });
   }
+  function fetchRefresh() {
+    console.log("inne i fetch refresh");
+    setIsLoading(true); // Starta laddningen
+    fetch("http://localhost:8080/refresh", {
+      method: 'GET',
+      credentials: 'include' // inkludera cookies
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json(); // Fortsätt bara om svaret är OK
+        }
+        throw new Error("Network response was not ok.");
+      })
+      .then((data) => {
+        setMessage(data.text); // Antag att 'data' innehåller ett fält 'message'
+        setIsLoading(false); // Stoppa laddningen
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false); // Stoppa laddningen även vid fel
+        // Det är bättre att hantera felmeddelanden som en state-variabel istället för att använda en array 'errors'
+      });
+  }
+  
 
   return (
     <>
@@ -31,12 +55,21 @@ function Home() {
         {isLoading ? (
           <p>Laddar...</p>
         ) : (
-          <button
+          <div>
+            <button
             onClick={fetchMessage}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            HÄMTA MEDDELANDE
-          </button>
+            >
+              HÄMTA MEDDELANDE
+            </button>
+            <button
+            onClick={fetchRefresh}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Testa APi
+            </button>
+          </div>
+          
         )}
         {message && <p>{message}</p>}
       </div>

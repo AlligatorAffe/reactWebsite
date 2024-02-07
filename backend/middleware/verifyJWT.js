@@ -11,9 +11,11 @@ const verifyJWT= (req,res, next) => {
   // Tokens are generally passed in header of request
   // Due to security reasons.
 
-
-  const authHeader = req.headers['authorization'];
-  if(!authHeader){
+  
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  console.log("-----------------------------------------------------------------")
+  console.log(authHeader)
+  if(!authHeader?.startsWith('Bearer ')){
     return res.sendStatus(401);
   }
   console.log(authHeader);
@@ -25,7 +27,8 @@ const verifyJWT= (req,res, next) => {
       if(err){
         return res.sendStatus(403);
       }
-        req.user = decoded.username;
+        req.user = decoded.UserInfo.username;
+        req.roles = decoded.UserInfo.roles;
         next();
     }
   );

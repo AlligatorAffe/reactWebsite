@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRef, useEffect, useState ,useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,8 +13,8 @@ function Login() {
   const errRef = useRef();
   const navigate = useNavigate();
 
-  const [userEmail, setUserEmail] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend
-  const [inputPassword, setInputPassword] = useState(""); // password the user inputs and the password that is sent to backend
+  const [user, setUser] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend
+  const [pwd, setPwd] = useState(""); // password the user inputs and the password that is sent to backend
   const [error, setError] = useState(""); // State to handle error
 
   const [success, setSuccess] = useState(false);
@@ -22,16 +23,16 @@ function Login() {
     userRef.current.focus();
   }, []);
 
-  const loggedIn = isUserLoggedIn();
+
 
   useEffect(() => {
     setError("");
-  }, [userEmail, inputPassword]);
+  }, [user, pwd]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     //setError(""); // Återställ tidigare felmeddelanden vid varje inloggningsförsök
-
+    /*
     if (!userEmail || userEmail.trim() === "") {
       setError("Username cannot be empty.");
       return;
@@ -40,16 +41,16 @@ function Login() {
       setError("Password cannot be empty.");
       return;
     }
+    */
 
     try {
-      const response = await fetch("http://localhost:8080/user/generateToken", {
+      const response = await fetch("http://localhost:8080/auth", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
-        body: `grant_type=password&username=${encodeURIComponent(
-          userEmail
-        )}&password=${encodeURIComponent(inputPassword)}`,
+        credentials: 'include',
+        body: JSON.stringify({user,pwd})
       });
       const body = await response.json();
       const token = body.token;
@@ -60,11 +61,11 @@ function Login() {
         console.log("success code 200");
           //navigate("/");
           console.log(token)
-          setAuth({userEmail,inputPassword,token})
-          setUserEmail("");
-          setInputPassword("");
+          setAuth({user,pwd,token})
+          setUser("");
+          setPwd("");
           setSuccess(true);
-          isUserLoggedIn(token);
+          //isUserLoggedIn(token);
       }
     } catch (err) {
       if(!err.response){
@@ -117,10 +118,10 @@ function Login() {
                   className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
                   type="userEmail"
                   name="userEmail"
-                  value={userEmail}
+                  value={user}
                   ref={userRef}
                   required
-                  onChange={(e) => setUserEmail(e.target.value)}
+                  onChange={(e) => setUser(e.target.value)}
                 ></input>
               </div>
               <div>
@@ -133,8 +134,8 @@ function Login() {
                 <input
                   className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
                   type="password"
-                  value={inputPassword}
-                  onChange={(e) => setInputPassword(e.target.value)}
+                  value={pwd}
+                  onChange={(e) => setPwd(e.target.value)}
                   name="password"
                   required
                 ></input>
