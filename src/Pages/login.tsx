@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useEffect, useState ,useContext} from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
 import BlueButton from "../Components/BlueButton";
@@ -22,8 +22,6 @@ function Login() {
   useEffect(() => {
     userRef.current.focus();
   }, []);
-
-
 
   useEffect(() => {
     setError("");
@@ -49,56 +47,57 @@ function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: 'include',
-        body: JSON.stringify({user,pwd})
+        credentials: "include",
+        body: JSON.stringify({ user, pwd }),
       });
       const body = await response.json();
       const token = body.token;
 
       //const role = response?.data?.roles;
-      
-      if(response.status === 200){
+
+      if (response.status === 200) {
         console.log("success code 200");
-          //navigate("/");
-          console.log(token)
-          setAuth({user,pwd,token})
-          setUser("");
-          setPwd("");
-          setSuccess(true);
-          //isUserLoggedIn(token);
+        //navigate("/");
+        console.log(token);
+        setAuth({ user, pwd, token });
+        setUser("");
+        setPwd("");
+        setSuccess(true);
+        //isUserLoggedIn(token);
       }
     } catch (err) {
-      if(!err.response){
+      if (!err.response) {
         setError("No Server response");
-      }else if(err.response?.status=== 400){
-        setError("Missing username or password")
-      } else if(err.response?.status === 401){
+      } else if (err.response?.status === 400) {
+        setError("Missing username or password");
+      } else if (err.response?.status === 401) {
         setError("Unathorized");
-      } else if (err.response?.status === 500){
-        setError("Internal Server Error")
-      }else {
+      } else if (err.response?.status === 500) {
+        setError("Internal Server Error");
+      } else {
         setError("An error occurred while logging in.");
       }
       errRef.current.focus();
     }
   };
-  const routeChange = () =>{ 
-    let path = "/"; 
+  const routeChange = () => {
+    let path = "/";
     navigate(path);
-  }
+  };
 
   return (
     <div>
       {success ? (
         <div>
           <p>Du lyckades logga in</p>
-          <BlueButton title="Go to Home Page" onClick={routeChange}>
-
-          </BlueButton>
+          <BlueButton
+            title="Go to Home Page"
+            onClick={routeChange}
+          ></BlueButton>
         </div>
       ) : (
         <div className="py-28">
-          <div className="w-full max-w-xs m-auto bg-indigo-100 rounded p-5">
+          <div className="w-full max-w-xs m-auto bg-slate-50 rounded p-5">
             <header>
               <img
                 className="w-30 mx-auto blend-multiply"
@@ -108,14 +107,11 @@ function Login() {
             </header>
             <form onSubmit={handleLogin}>
               <div>
-                <label
-                  className="block mb-2 text-indigo-500"
-                  htmlFor="username"
-                >
+                <label className="block mb-2 text-green-950" htmlFor="username">
                   Email
                 </label>
                 <input
-                  className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
+                  className="w-full p-2 mb-6 text-green-950 border-b-2 border-lime-700 outline-none focus:bg-gray-300"
                   type="userEmail"
                   name="userEmail"
                   value={user}
@@ -125,14 +121,11 @@ function Login() {
                 ></input>
               </div>
               <div>
-                <label
-                  className="block mb-2 text-indigo-500"
-                  htmlFor="password"
-                >
+                <label className="block mb-2 text-green-950" htmlFor="password">
                   Password
                 </label>
                 <input
-                  className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
+                  className="w-full p-2 mb-6 text-green-950 border-b-2 border-lime-700 outline-none focus:bg-gray-300"
                   type="password"
                   value={pwd}
                   onChange={(e) => setPwd(e.target.value)}
@@ -142,26 +135,26 @@ function Login() {
               </div>
               <div>
                 <input
-                  className="w-full bg-indigo-700 hover:bg-pink-700 text-white font-bold py-2 px-4 mb-6 rounded"
+                  className="w-full bg-lime-700 hover:bg-green-700 text-white font-bold py-2 px-4 mb-6 rounded"
                   type="submit"
                 ></input>
               </div>
             </form>
-            {error && <p className="text-red-500">{error}</p>}
-            <footer>
+            {error && <p className="text-lime-700">{error}</p>}
+            <div className="pb-4">
               <Link
                 to="/forgot-password"
-                className="text-indigo-700 hover:text-pink-700 text-sm float-left"
+                className="text-green-950 hover:text-lime-700 text-sm float-left"
               >
                 Forgot Password?
               </Link>
               <Link
-                to="/create-account"
-                className="text-indigo-700 hover:text-pink-700 text-sm float-right"
+                to="/pages/create-account"
+                className="text-green-950 hover:text-lime-700 text-sm float-right"
               >
                 Create Account
               </Link>
-            </footer>
+            </div>
           </div>
         </div>
       )}

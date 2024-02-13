@@ -8,6 +8,8 @@ import Login from "./Pages/login";
 import NoPage from "./Pages/noPage";
 import Layout from "./Components/Layout";
 import Home from "./Pages/Home";
+import CreateAccount from "./Pages/createAccount";
+import ForgotPassword from "./Pages/forgotPassword";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           <Route path="blogpost" element={<Blog />} />
           <Route path="pages/about" element={<About />} />
           <Route path="pages/login" element={<Login />} />
+          <Route path="pages/create-account" element={<CreateAccount />} />
+          <Route path="pages/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<NoPage />} />
           {/* Lägg till fler rutter efter behov */}
         </Route>

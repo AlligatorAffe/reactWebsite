@@ -4,41 +4,40 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
-const dotenv = require("dotenv");
-
-dotenv.config();
+require("dotenv").config();
 
 //const verifyToken = require("./routers/authentication");
 const cors = require("cors");
 
-const verifyJWT = require('./middleware/verifyJWT');
+const verifyJWT = require("./middleware/verifyJWT");
 const verifyRoles = require("./middleware/verifyRoles");
 const ROLES_LIST = require("./config/roles_list");
 
-
 const app = express();
+
+const mongoose = require("mongoose");
+
+const connectDB = require("./config/dvConn");
 const port = process.env.PORT || 8080; // Du kan välja vilken port som helst
 
-
+connectDB();
 
 app.use(bodyParser.json());
-
-
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-
-app.use(cors({
-  origin: ['http://127.0.0.1:5173', 'http://localhost:5173'], 
-  credentials: true
-}));
-
+app.use(
+  cors({
+    origin: ["http://127.0.0.1:5173", "http://localhost:5173"],
+    credentials: true,
+  })
+);
 
 app.get("/Message", (req, res) => {
   console.log("Received GET request");
-  
+
   try {
     const message = { text: "NU HÄMTAR VI GREJER FRÅN BACKENDEN" }; // Gör detta till ett objekt
     console.log("Sending 200");
@@ -53,62 +52,29 @@ app.get("/", (req, res) => {
   res.send("Hello from the backend!");
 });
 
-
 ///--------------------Routes--------------------------------
 
 app.use("/login", require("./routers/login"));
-app.use('/register', require('./routers/register'));
-app.use('/auth', require('./routers/auth'));
-app.use('/refresh', require('./routers/refresh'));
-app.use('/logout', require('./routers/logout'));
+app.use("/register", require("./routers/register"));
+app.use("/auth", require("./routers/auth"));
+app.use("/refresh", require("./routers/refresh"));
+app.use("/logout", require("./routers/logout"));
 //---------------------Routes----------------------------------
 
+app.get(
+  "/protectedRoute",
+  verifyJWT,
+  verifyRoles(ROLES_LIST.Admin),
+  (req, res) => {
+    const test = req.cookies;
+    console.log(test);
+    res.send("Denna sida är skyddad och du är autentiserad!");
+  }
+);
 
-
-
-app.get("/protectedRoute", verifyJWT, verifyRoles(ROLES_LIST.Admin) , (req, res) => {
-  const test = req.cookies
-  console.log(test)
-  res.send("Denna sida är skyddad och du är autentiserad!" );
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.listen(port, () => {
-  console.log(`Backend running on http://localhost:${port}`);
+mongoose.connection.once("open", () => {
+  console.log("Connected to mongoDB");
+  app.listen(port, () => {
+    console.log(`Backend running on http://localhost:${port}`);
+  });
 });
