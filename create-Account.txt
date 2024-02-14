@@ -1,0 +1,200 @@
+import { useEffect, useRef, useState } from "react";
+import BlueButton from "../Components/BlueButton";
+import welcomeImage from "../../public/blabarOchLingon.webp";
+import { Link, useNavigate } from "react-router-dom";
+
+const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[A-Z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
+function CreateAccount() {
+  const loggedIn = false;
+  const [createdAccount, setCreatedAccount] = useState(false);
+  const userRef = useRef();
+  const errRef = useRef();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend.
+  const [validName, setValidName] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
+
+  const [userPassword, setUserPassword] = useState(""); // password the user inputs and the password that is sent to backend
+  const [validPassword, setValidPassword] = useState(false);
+  const [passwordFocus, setPasswordFocus] = useState(false);
+
+  const [matchPassW, setMatchPassW] = useState("");
+  const [validMatch, setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
+
+  const [error, setError] = useState(""); // State to handle error
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    const result = USER_REGEX.test(user);
+    console.log(result);
+    console.log(user);
+    setValidName(result);
+  }, [user]);
+
+  useEffect(() => {
+    const result = PWD_REGEX.test(userPassword);
+    console.log(result);
+    console.log(userPassword);
+    setValidPassword(result);
+    const match = userPassword == matchPassW;
+    setValidMatch(match);
+  }, [userPassword, matchPassW]);
+
+  useEffect(() => {
+    setError("");
+  }, [user, inputPassword, matchPassW]);
+
+  const handleCreateAccount = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (userPassword !== validatePassword) {
+      setError("The passwords need to match");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:8080/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user,
+          pwd,
+        }),
+      });
+
+      if (response.status === 200) {
+        console.log("Account successfully created!");
+        setCreatedAccount(true);
+      }
+    } catch (error: unknown) {
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response: { status?: number } };
+        switch (err.response.status) {
+          case 400:
+            setError("Missing password or Username");
+            break;
+          case 401:
+            setError("Unauthorized");
+            break;
+          case 500:
+            setError("internal server error");
+            break;
+          default:
+            setError("An unexpected error occurred");
+        }
+      } else {
+        setError("An unexpected error occurred");
+      }
+    }
+  };
+  return (
+    <div>
+      {createdAccount ? (
+        <div className="flex flex-col justify-center items-center">
+          <p className="text-green-600 text-xl font-bold mb-4">
+            You created an account. Welcome.
+          </p>
+          <Link to="/">
+            <img
+              src={welcomeImage}
+              alt=""
+              className="w-28 mx-auto blend-multiply"
+            />
+          </Link>
+        </div>
+      ) : (
+        <div className="flex pt-24 pb-32 justify-center bg-gray-100">
+          {loggedIn ? (
+            <p>Du är inloggad!</p>
+          ) : (
+            <div className="flex flex-col items-center p-6 bg-white shadow-md rounded-lg">
+              <h1 className="text-xl font-bold mb-4">Create account!</h1>
+              <form onSubmit={handleCreateAccount} className="w-full max-w-xs">
+                <label htmlFor="username">Username:</label>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  id="username"
+                  autoComplete="off"
+                  className="input input-bordered w-full mb-4 hover:bg-slate-100"
+                  value={user}
+                  ref={userRef}
+                  onChange={(e) => setUser(e.target.value)}
+                  required
+                  aria-invalid={validName ? "false" : "true"}
+                  aria-describedby="uidnote"
+                  onFocus={() => setUserFocus(true)}
+                  onBlur={() => setUserFocus(false)}
+                />
+
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className="input input-bordered w-full mb-4 hover:bg-slate-100"
+                  //value={accountEmail}
+                  //onChange={(e) => setAccountEmail(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Firstname"
+                  className="input input-bordered w-full mb-4 hover:bg-slate-100"
+                  //value={firstName}
+                  //onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Lastname"
+                  className="input input-bordered w-full mb-4 hover:bg-slate-100"
+                  //value={lastName}
+                  //onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Password"
+                  autoComplete="off"
+                  className="input input-bordered w-full mb-4 hover:bg-slate-100"
+                  onChange={(e) => setUserPassword(e.target.value)}
+                  required
+                  aria-invalid={validName ? "false" : "true"}
+                  aria-describedby="uidnote"
+                  onFocus={() => setUserFocus(true)}
+                  onBlur={() => setUserFocus(false)}
+                />
+                <input
+                  type="password"
+                  id="password2"
+                  autoComplete="false"
+                  placeholder="Repeat Password"
+                  //value={validatePassword}
+                  //onChange={(e) => setValidatePassword(e.target.value)}
+                  className="input input-bordered w-full mb-4 hover:bg-slate-100"
+                  required
+                />
+                <input
+                  className="w-full bg-lime-700 hover:bg-green-700 text-white font-bold py-2 px-4 mb-6 rounded"
+                  type="submit"
+                  value="Create Account" // Added a value for clarity
+                />
+                {error && <p className="text-red-500">{error}</p>}
+              </form>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default CreateAccount;

@@ -1,0 +1,46 @@
+  const userRef = useRef();
+  const errRef = useRef();
+  const navigate = useNavigate();
+
+  const [userEmail, setUserEmail] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend.
+  const [validName, setValidName] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
+
+  const [inputPassword, setInputPassword] = useState(""); // password the user inputs and the password that is sent to backend 
+  const [validPassword,setValidPassword] = useState(false);
+  const [passwordFocus,setPasswordFocus] = useState(false);
+
+  const [matchPassW,setMatchPassW] = useState("")
+  const [validMatch,setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
+
+  const [error, setError] = useState(""); // State to handle error
+  const [success,setSuccess] = useState(false);
+  const loggedIn = isUserLoggedIn();
+
+  useEffect(() =>{
+    userRef.current.focus();
+  }, [])
+
+  useEffect(() =>{
+    const result = USER_REGEX.test(userEmail);
+    console.log(result)
+    console.log(userEmail);
+    setValidName(result);
+  }, [userEmail])
+    
+
+  useEffect(() =>{
+    const result = PWD_REGEX.test(inputPassword);
+    console.log(result);
+    console.log(inputPassword);
+    setValidPassword(result);
+    const match = inputPassword == matchPassW;
+    setValidMatch(match);
+  }, [inputPassword, matchPassW])
+
+  useEffect(() =>{
+    setError("");
+  },[userEmail,inputPassword,matchPassW])
+
+
