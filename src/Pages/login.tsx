@@ -1,14 +1,20 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useEffect, useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
+import { useRef, useEffect, useState  } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+
 import BlueButton from "../Components/BlueButton";
 
-import AuthContext from "../context/AuthProvider";
+import useAuth from "../hooks/useAuth";
+
 
 function Login() {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
+
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
+
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
@@ -17,7 +23,7 @@ function Login() {
   const [pwd, setPwd] = useState(""); // password the user inputs and the password that is sent to backend
   const [error, setError] = useState(""); // State to handle error
 
-  const [success, setSuccess] = useState(false);
+
 
   useEffect(() => {
     userRef.current.focus();
@@ -62,7 +68,7 @@ function Login() {
         setAuth({ user, pwd, token, role });
         setUser("");
         setPwd("");
-        setSuccess(true);
+        navigate(from, { replace: true});
 
       }
     } catch (err) {
@@ -87,15 +93,6 @@ function Login() {
 
   return (
     <div>
-      {success ? (
-        <div>
-          <p>Du lyckades logga in</p>
-          <BlueButton
-            title="Go to Home Page"
-            onClick={routeChange}
-          ></BlueButton>
-        </div>
-      ) : (
         <div className="py-28">
           <div className="w-full max-w-xs m-auto bg-slate-50 rounded p-5">
             <header>
@@ -157,7 +154,6 @@ function Login() {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 }

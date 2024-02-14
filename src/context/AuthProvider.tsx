@@ -1,8 +1,14 @@
-import { createContext, useState } from "react";
+import { ReactNode, createContext, useState } from "react";
 
 const AuthContext = createContext({});
 
-export const AuthProvider = ({ children })=>{
+/*
+interface AuthProviderProps {
+    children: ReactNode; // Specificera typen för children som ReactNode
+}
+*/
+
+export const AuthProvider = ({ children } /*: AuthProviderProps*/)=>{
     const [auth, setAuth] = useState({});
 
     return (

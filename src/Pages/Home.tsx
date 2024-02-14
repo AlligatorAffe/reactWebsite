@@ -1,4 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Home() {
   const [message, setMessage] = useState("");
@@ -47,6 +50,13 @@ function Home() {
         // Det är bättre att hantera felmeddelanden som en state-variabel istället för att använda en array 'errors'
       });
   }
+  function fetchAdmin() {
+    const navigate = useNavigate();
+
+    console.log("inne i fetch refresh");
+    setIsLoading(true); // Starta laddningen
+    navigate("/pages/admin");
+  }
   
 
   return (
@@ -68,6 +78,7 @@ function Home() {
             >
               Testa APi
             </button>
+            <Link to={"/pages/admin"} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">admin</Link>
           </div>
           
         )}
