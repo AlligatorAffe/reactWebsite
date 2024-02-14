@@ -51,19 +51,19 @@ function Login() {
         body: JSON.stringify({ user, pwd }),
       });
       const body = await response.json();
-      const token = body.token;
+      const token = body.accessToken;
+      const role = body.roles;
 
-      //const role = response?.data?.roles;
 
       if (response.status === 200) {
         console.log("success code 200");
-        //navigate("/");
+
         console.log(token);
-        setAuth({ user, pwd, token });
+        setAuth({ user, pwd, token, role });
         setUser("");
         setPwd("");
         setSuccess(true);
-        //isUserLoggedIn(token);
+
       }
     } catch (err) {
       if (!err.response) {
@@ -140,7 +140,7 @@ function Login() {
                 ></input>
               </div>
             </form>
-            {error && <p className="text-lime-700">{error}</p>}
+            {error && <p className="text-red-700">{error}</p>}
             <div className="pb-4">
               <Link
                 to="/forgot-password"

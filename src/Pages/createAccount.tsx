@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -13,6 +13,11 @@ function CreateAccount() {
   const [accountEmail, setAccountEmail] = useState(""); // användarens email.
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setError("");
+  }, [accountEmail, firstName, lastName, userPassword, validatePassword]);
+  
 
   const handleCreateAccount = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,7 +104,6 @@ function CreateAccount() {
                   value={accountEmail}
                   onChange={(e) => {
                     setAccountEmail(e.target.value);
-                    setError(""); // Rensa felmeddelandet när användaren börjar skriva
                   }}
                   required
                 />
@@ -127,7 +131,6 @@ function CreateAccount() {
                   value={userPassword}
                   onChange={(e) => {
                     setUserPassword(e.target.value);
-                    setError("");
                   }}
                   className="input input-bordered w-full mb-4 hover:bg-slate-100"
                   required
@@ -140,7 +143,6 @@ function CreateAccount() {
                   value={validatePassword}
                   onChange={(e) => {
                     setValidatePassword(e.target.value);
-                    setError("");
                   }}
                   className="input input-bordered w-full mb-4 hover:bg-slate-100"
                   required
