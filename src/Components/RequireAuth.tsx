@@ -3,7 +3,6 @@
 import { Navigate, useLocation, Outlet } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
-
 /*
 const RequireAuth = ({ allowedRoles }) => {
   const { auth } = useAuth();
@@ -29,15 +28,15 @@ const RequireAuth = ({ allowedRoles }) => {
 const RequireAuth = ({ allowedRoles }) => {
   const { auth } = useAuth();
   const location = useLocation();
-  console.log("inne i auth", auth);
-  console.log("inne i allowedRoles", allowedRoles);
 
-  return (
-    auth && auth.role && auth.role.some(role => allowedRoles.includes(role))
-      ? <Outlet />
-      : (!auth || !auth.user)
-        ? <Navigate to="/pages/login" state={{ from: location }} replace />
-        : <Navigate to="/pages/unauthorized" state={{ from: location }} replace />
+  return auth &&
+    auth.role &&
+    auth.role.some((role) => allowedRoles.includes(role)) ? (
+    <Outlet />
+  ) : !auth || !auth.user ? (
+    <Navigate to="/pages/login" state={{ from: location }} replace />
+  ) : (
+    <Navigate to="/pages/unauthorized" state={{ from: location }} replace />
   );
 };
 
@@ -58,7 +57,6 @@ const RequireAuth = ( {allowedRoles} ) => {
 }
 */
 
-
 /*
 const RequireAuth = () => {
   const { auth } = useAuth();
@@ -73,4 +71,3 @@ const RequireAuth = () => {
 */
 
 export default RequireAuth;
-

@@ -12,7 +12,7 @@ const handleRefreshToken = async (req, res) => {
     "------------------------------inne i refresh---------------------------------------------------"
   );
 
-  console.log("nummer 2", cookies);
+  console.log("cookies i refresh", cookies);
 
   if (!cookies?.jwt) {
     console.log("inne i cookies error ");

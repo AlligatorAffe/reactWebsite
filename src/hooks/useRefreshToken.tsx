@@ -8,13 +8,12 @@ const useRefreshToken = () => {
       method: "GET",
       credentials: "include", // inkludera cookies
     });
-    const data = await response.json;
+    const data = await response.json(); // Fixad funktion anrop
     setAuth((prev) => {
-      console.log(JSON.stringify(prev));
-      console.log(response.formData.accessToken);
-      return { ...prev, accessToken: response.data.accessToken };
+      console.log("loggar min refreshToken ", data.accessToken); // Fixad datavariabel användning
+      return { ...prev, accessToken: data.accessToken }; // Fixad datavariabel användning
     });
-    return response.formData.accessToken;
+    return data.accessToken; // Fixad datavariabel användning
   };
   return refresh;
 };

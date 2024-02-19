@@ -6,7 +6,7 @@ import useAuth from "../hooks/useAuth";
 function Home() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Lägg till ett laddningsstatus
-
+  const { auth } = useAuth();
   function fetchMessage() {
     console.log("inne i fetch message");
     setIsLoading(true); // Starta laddningen
@@ -28,11 +28,10 @@ function Home() {
       });
   }
   function fetchRefresh() {
-    console.log("inne i fetch refresh");
     setIsLoading(true); // Starta laddningen
     fetch("http://localhost:8080/refresh", {
-      method: 'GET',
-      credentials: 'include' // inkludera cookies
+      method: "GET",
+      credentials: "include", // inkludera cookies
     })
       .then((response) => {
         if (response.ok) {
@@ -57,7 +56,6 @@ function Home() {
     setIsLoading(true); // Starta laddningen
     navigate("/pages/admin");
   }
-  
 
   return (
     <>
@@ -67,20 +65,24 @@ function Home() {
         ) : (
           <div>
             <button
-            onClick={fetchMessage}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={fetchMessage}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
               HÄMTA MEDDELANDE
             </button>
             <button
-            onClick={fetchRefresh}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={fetchRefresh}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
-              Testa APi
+              Testa Refresh
             </button>
-            <Link to={"/pages/admin"} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">admin</Link>
+            <Link
+              to={"/pages/admin"}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              admin
+            </Link>
           </div>
-          
         )}
         {message && <p>{message}</p>}
       </div>
