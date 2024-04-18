@@ -1,100 +1,82 @@
-/* eslint-disable prefer-const */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useEffect, useState  } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-
-import BlueButton from "../Components/BlueButton";
-
-import useAuth from "../hooks/useAuth";
-
+import { SyntheticEvent, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
 
 function Login() {
-  const { setAuth } = useAuth();
-
-  const location = useLocation();
-
-  const from = location.state?.from?.pathname || "/";
-
-  const userRef = useRef();
-  const errRef = useRef();
   const navigate = useNavigate();
-
-  const [user, setUser] = useState(""); // the email the user uses to try to login with, also the same email that is sent to the backend
-  const [pwd, setPwd] = useState(""); // password the user inputs and the password that is sent to backend
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // State to handle error
 
-
-
+  
+  const loggedIn = isUserLoggedIn();
+/*
   useEffect(() => {
-    userRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    setError("");
-  }, [user, pwd]);
-
+    const isLoggedIn = localStorage.getItem("IsloggedIn");
+    if (isLoggedIn === "true") {
+      navigate("/");
+    }
+  }, [navigate]);
+*/
   const handleLogin = async (e) => {
     e.preventDefault();
-    //setError(""); // Återställ tidigare felmeddelanden vid varje inloggningsförsök
-    /*
-    if (!userEmail || userEmail.trim() === "") {
+    setError(""); // Återställ tidigare felmeddelanden vid varje inloggningsförsök
+
+    if (!email || email.trim() === "") {
       setError("Username cannot be empty.");
       return;
     }
-    if (!inputPassword || inputPassword.trim() === "") {
+    if (!password || password.trim() === "") {
       setError("Password cannot be empty.");
       return;
     }
-    */
 
     try {
-      const response = await fetch("http://localhost:8080/auth", {
+      const response = await fetch("http://localhost:8080/user/generateToken", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        credentials: "include",
-        body: JSON.stringify({ user, pwd }),
+        body: `grant_type=password&username=${encodeURIComponent(email)}&password=${encodeURIComponent(
+					password
+				)}`,
       });
       const body = await response.json();
-      const token = body.accessToken;
-      const role = body.roles;
-
-
-      if (response.status === 200) {
-        console.log("success code 200");
-
-        console.log(token);
-        setAuth({ user, pwd, token, role });
-        setUser("");
-        setPwd("");
-        navigate(from, { replace: true});
-
+      const token = body.token;
+      switch (response.status) {
+        case 200:
+          console.log("success code 200");
+          //navigate("/");
+          setEmail("");
+          setPassword("");
+          isUserLoggedIn(token);
+          break;
+        case 400:
+          setError("Incorrect username or password");
+          break;
+        case 401:
+          setError("Incorrect username or password");
+          break;
+        case 500:
+          setError(body.error); /*"Internal Server Error");*/
+          break;
+        default:
+          setError("An error occurred while logging in.");
+          break;
       }
-    } catch (err) {
-      if (!err.response) {
-        setError("No Server response");
-      } else if (err.response?.status === 400) {
-        setError("Missing username or password");
-      } else if (err.response?.status === 401) {
-        setError("Unathorized");
-      } else if (err.response?.status === 500) {
-        setError("Internal Server Error");
-      } else {
-        setError("An error occurred while logging in.");
-      }
-      errRef.current.focus();
+    } catch (error) {
+      setError("An error occurred while logging in.");
     }
-  };
-  const routeChange = () => {
-    let path = "/";
-    navigate(path);
   };
 
   return (
     <div>
+      
+      {loggedIn ? (
+        <p>Du lyckades logga in</p>
+      ) : (
         <div className="py-28">
-          <div className="w-full max-w-xs m-auto bg-slate-50 rounded p-5">
+          <div className="w-full max-w-xs m-auto bg-indigo-100 rounded p-5">
             <header>
               <img
                 className="w-30 mx-auto blend-multiply"
@@ -104,56 +86,54 @@ function Login() {
             </header>
             <form onSubmit={handleLogin}>
               <div>
-                <label className="block mb-2 text-green-950" htmlFor="username">
+                <label className="block mb-2 text-indigo-500" htmlFor="username">
                   Email
                 </label>
                 <input
-                  className="w-full p-2 mb-6 text-green-950 border-b-2 border-lime-700 outline-none focus:bg-gray-300"
-                  type="userEmail"
-                  name="userEmail"
-                  value={user}
-                  ref={userRef}
-                  required
-                  onChange={(e) => setUser(e.target.value)}
+                  className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
+                  type="email"
+                  name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 ></input>
               </div>
               <div>
-                <label className="block mb-2 text-green-950" htmlFor="password">
+                <label className="block mb-2 text-indigo-500" htmlFor="password">
                   Password
                 </label>
                 <input
-                  className="w-full p-2 mb-6 text-green-950 border-b-2 border-lime-700 outline-none focus:bg-gray-300"
+                  className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300"
                   type="password"
-                  value={pwd}
-                  onChange={(e) => setPwd(e.target.value)}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   name="password"
-                  required
                 ></input>
               </div>
               <div>
                 <input
-                  className="w-full bg-lime-700 hover:bg-green-700 text-white font-bold py-2 px-4 mb-6 rounded"
+                  className="w-full bg-indigo-700 hover:bg-pink-700 text-white font-bold py-2 px-4 mb-6 rounded"
                   type="submit"
                 ></input>
               </div>
             </form>
-            {error && <p className="text-red-700">{error}</p>}
-            <div className="pb-4">
+            {error && <p className="text-red-500">{error}</p>}
+            <footer>
               <Link
                 to="/forgot-password"
-                className="text-green-950 hover:text-lime-700 text-sm float-left"
+                className="text-indigo-700 hover:text-pink-700 text-sm float-left"
               >
                 Forgot Password?
               </Link>
               <Link
-                to="/pages/create-account"
-                className="text-green-950 hover:text-lime-700 text-sm float-right"
+                to="/create-account"
+                className="text-indigo-700 hover:text-pink-700 text-sm float-right"
               >
                 Create Account
               </Link>
-            </div>
+            </footer>
           </div>
         </div>
+      )}
     </div>
   );
 }
