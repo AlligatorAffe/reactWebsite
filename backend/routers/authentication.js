@@ -1,6 +1,3 @@
-
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
 //import express from "express";
 const express = require("express");
 const router = express.Router();

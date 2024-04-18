@@ -1,7 +1,7 @@
 import { isUserLoggedIn } from "../Components/IsUserLoggedIn";
 
 function Blog() {
-  const loggedIn = isUserLoggedIn(false);
+  const loggedIn = isUserLoggedIn();
   return (
     <div>
       {loggedIn ? (
